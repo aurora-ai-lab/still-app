@@ -34,6 +34,7 @@ export default function Home() {
   const [showEnd, setShowEnd] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [copied, setCopied] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("still-sessions");
@@ -75,6 +76,13 @@ export default function Home() {
     setShowEnd(false);
   };
 
+  const downloadShareCard = () => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350"><rect width="1080" height="1350" fill="#20201e"/><circle cx="900" cy="120" r="230" fill="none" stroke="#c7f36c" stroke-opacity=".25"/><text x="90" y="150" fill="#9b9b92" font-family="monospace" font-size="24">STILL / 今日报告</text><text x="90" y="430" fill="#f5f4ef" font-family="sans-serif" font-size="76">什么都没发生，</text><text x="90" y="525" fill="#c7f36c" font-family="sans-serif" font-size="76">也很好。</text><text x="90" y="760" fill="#f5f4ef" font-family="monospace" font-size="64">${formatMinutes(todayTotal)}</text><text x="90" y="820" fill="#9b9b92" font-family="sans-serif" font-size="24">安静时间</text><circle cx="90" cy="1170" r="18" fill="#c7f36c"/><text x="130" y="1180" fill="#f5f4ef" font-family="sans-serif" font-size="26">无事发生 · Still</text></svg>`;
+    const blob = new Blob([svg], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "still-today.svg"; a.click(); URL.revokeObjectURL(url);
+  };
+
   const share = async () => {
     const text = `今日无事发生 ${formatMinutes(todayTotal)}。\n什么都没发生，也很好。`;
     if (navigator.share) await navigator.share({ title: "无事发生", text });
@@ -106,7 +114,7 @@ export default function Home() {
             <button className={`primary-cta ${activeSince ? "stop" : ""}`} onClick={activeSince ? stop : start}>{activeSince ? "结束这段时间" : "开始无事发生"}<span>↗</span></button>
           </section>
 
-          <section className="today-grid"><div className="panel report-panel"><div className="panel-heading"><div><p className="eyebrow">今日报告</p><h2>什么都没发生，<br /><em>也很好。</em></h2></div><span className="report-date">{todaySessions.length > 0 ? "已记录" : "等待第一段"}</span></div><div className="report-stats"><div><strong>{formatMinutes(todayTotal).replace(" 分钟", "")}</strong><span>安静时间</span></div><div><strong>{todaySessions.length || "—"}</strong><span>段记录</span></div><div><strong>{todaySessions.length ? "100%" : "—"}</strong><span>未被打扰</span></div></div><button className="text-button" onClick={share}>{copied ? "已复制到剪贴板" : "分享今日报告 →"}</button></div><div className="panel heat-panel"><div className="panel-heading"><div><p className="eyebrow">过去 35 天</p><h3>空白日历</h3></div><span className="heat-legend">少 <i /><i /><i /><i /> 多</span></div><div className="heatmap">{heatmap.map((level, index) => <span key={index} className={`heat-${level}`} title={`${level ? level * 15 : 0} 分钟`} />)}</div><div className="heat-footer"><span>每一格都是一个没有被浪费的空白。</span><button className="text-button" onClick={() => setView("history")}>查看历史</button></div></div></section>
+          <section className="today-grid"><div className="panel report-panel"><div className="panel-heading"><div><p className="eyebrow">今日报告</p><h2>什么都没发生，<br /><em>也很好。</em></h2></div><span className="report-date">{todaySessions.length > 0 ? "已记录" : "等待第一段"}</span></div><div className="report-stats"><div><strong>{formatMinutes(todayTotal).replace(" 分钟", "")}</strong><span>安静时间</span></div><div><strong>{todaySessions.length || "—"}</strong><span>段记录</span></div><div><strong>{todaySessions.length ? "100%" : "—"}</strong><span>未被打扰</span></div></div><div className="report-actions"><button className="text-button" onClick={share}>{copied ? "已复制到剪贴板" : "分享今日报告 →"}</button><button className="text-button" onClick={() => setShowShare(true)}>预览分享卡 →</button></div></div><div className="panel heat-panel"><div className="panel-heading"><div><p className="eyebrow">过去 35 天</p><h3>空白日历</h3></div><span className="heat-legend">少 <i /><i /><i /><i /> 多</span></div><div className="heatmap">{heatmap.map((level, index) => <span key={index} className={`heat-${level}`} title={`${level ? level * 15 : 0} 分钟`} />)}</div><div className="heat-footer"><span>每一格都是一个没有被浪费的空白。</span><button className="text-button" onClick={() => setView("history")}>查看历史</button></div></div></section>
 
           <section className="insight-row"><div className="insight"><span className="insight-icon">✦</span><div><p className="eyebrow">连续记录</p><strong>{todaySessions.length ? "第 1 天" : "从今天开始"}</strong></div></div><div className="insight"><span className="insight-icon">∞</span><div><p className="eyebrow">全部时间</p><strong>{allTime ? formatMinutes(allTime) : "—"}</strong></div></div><div className="insight quote"><span>“</span><strong>允许自己<br />什么都不做。</strong></div></section>
         </>}
@@ -118,7 +126,7 @@ export default function Home() {
       </section>
 
       {showEnd && <div className="modal-backdrop" onClick={() => setShowEnd(false)}><div className="end-modal" onClick={(event) => event.stopPropagation()}><div className="modal-handle" /><p className="eyebrow">结束这段无事发生</p><h2>刚才在做什么？</h2><p className="modal-copy">选择一个最接近的答案。也可以什么都不说。</p><div className="category-grid">{categories.map((category) => <button key={category} className={selectedCategory === category ? "chosen" : ""} onClick={() => setSelectedCategory(category)}>{category}</button>)}</div><button className="primary-cta" onClick={finish}>保存这段时间 <span>↗</span></button></div></div>}
-    </main>
+    {showShare && <div className="modal-backdrop" onClick={() => setShowShare(false)}><div className="share-modal" onClick={(event) => event.stopPropagation()}><div className="share-card-preview"><span>STILL / 今日报告</span><strong>什么都没发生，<em>也很好。</em></strong><b>{formatMinutes(todayTotal)}</b><small>安静时间</small><i>·</i></div><div className="share-actions"><button className="primary-cta" onClick={downloadShareCard}>导出分享卡 <span>↗</span></button><button className="text-button" onClick={() => setShowShare(false)}>返回</button></div></div></div>}</main>
   );
 }
 
@@ -134,3 +142,7 @@ function Achievements({ sessions, todayTotal }: { sessions: Session[]; todayTota
 function Settings() {
   return <section className="subpage"><div className="subpage-intro"><p className="eyebrow">把它调成你的样子</p><h2>设置</h2><p>Still 默认安静。你可以让它更安静。</p></div><div className="panel settings-card"><div className="setting-row"><div><strong>轻触觉反馈</strong><span>开始和结束时轻轻提醒</span></div><button className="toggle on"><i /></button></div><div className="setting-row"><div><strong>每日提醒</strong><span>默认关闭，不主动打扰</span></div><button className="toggle"><i /></button></div><div className="setting-row"><div><strong>声音</strong><span>没有声音也可以</span></div><button className="toggle"><i /></button></div><div className="setting-row"><div><strong>数据同步</strong><span>Supabase 连接待配置</span></div><span className="pill">离线模式</span></div></div><p className="settings-footnote">Still 0.1 · Bundle ID capital.aurumcapital.still<br />你的记录存储在这台设备上。未来连接账户后可跨设备同步。</p></section>;
 }
+
+
+
+
