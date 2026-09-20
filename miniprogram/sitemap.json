@@ -1,6 +1,4 @@
-page {
-  background: #f5f4ef;
-}
 {
-  "desc": "Still / 无事发生小程序 MVP"
+  "desc": "Still / 无事发生小程序 MVP",
+  "rules": [{ "action": "allow", "page": "pages/index/index" }]
 }
