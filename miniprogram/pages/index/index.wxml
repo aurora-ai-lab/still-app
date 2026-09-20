@@ -1,0 +1,23 @@
+<view class="page">
+  <view class="topbar">
+    <view class="brand"><text class="brand-mark">·</text><text>无事发生</text></view>
+    <text class="status">本地已保存</text>
+  </view>
+  <view class="eyebrow">{{activeSince ? '正在发生' : '此刻没有安排'}}</view>
+  <view class="hero {{activeSince ? 'running' : ''}}">
+    <view class="orbit"></view>
+    <text class="time">{{elapsed < 3600 ? (elapsed / 60 < 1 ? '00:00' : '') : ''}}{{elapsed ? '' : '00:00'}}</text>
+    <text class="time actual">{{elapsed}}</text>
+    <text class="caption">{{activeSince ? '不需要做什么，继续就好。' : '给自己一段不必产出的时间。'}}</text>
+    <button class="cta {{activeSince ? 'stop' : ''}}" bindtap="{{activeSince ? 'stop' : 'start'}}">{{activeSince ? '结束这段时间' : '开始无事发生'}} <text>↗</text></button>
+  </view>
+  <view class="report card">
+    <view class="section-head"><view><text class="eyebrow">今日报告</text><text class="title">什么都没发生，<text class="muted">也很好。</text></text></view><text class="tiny">{{sessions.length ? '已记录' : '等待第一段'}}</text></view>
+    <view class="stats"><view><text class="number">{{Math.floor(todayTotal / 60) || '—'}}</text><text class="label">安静分钟</text></view><view><text class="number">{{sessions.length || '—'}}</text><text class="label">段记录</text></view><view><text class="number">{{sessions.length ? '100%' : '—'}}</text><text class="label">未被打扰</text></view></view>
+    <button class="link" bindtap="share">分享今日报告 →</button>
+  </view>
+  <view class="card heat"><view class="section-head"><view><text class="eyebrow">过去 35 天</text><text class="subtitle">空白日历</text></view><text class="tiny">少　▪ ▪ ▪ ▪　多</text></view><view class="grid"> <block wx:for="{{35}}" wx:key="*this"><view class="cell {{index % 7 === 1 ? 'empty' : (index % 4 === 0 ? 'level-2' : 'level-1')}}"></view></block></view><text class="hint">每一格都是一个没有被浪费的空白。</text></view>
+  <view class="footer">STILL · 0.1 · 离线可用</view>
+</view>
+
+<view wx:if="{{showEnd}}" class="mask" catchtap="noop"><view class="sheet" catchtap="noop"><view class="handle"></view><text class="eyebrow">结束这段无事发生</text><text class="sheet-title">刚才在做什么？</text><text class="sheet-copy">选择一个最接近的答案。也可以什么都不说。</text><view class="categories"><block wx:for="{{categories}}" wx:key="*this"><button class="category {{selectedCategory === item ? 'chosen' : ''}}" data-category="{{item}}" bindtap="chooseCategory">{{item}}</button></block></view><button class="cta dark" bindtap="finish">保存这段时间 <text>↗</text></button></view></view>

@@ -1,0 +1,14 @@
+{
+  "miniprogramRoot": "miniprogram/",
+  "projectname": "still-mini-program",
+  "description": "Still / 无事发生 微信小程序 MVP",
+  "appid": "wx0000000000000000",
+  "compileType": "miniprogram",
+  "setting": {
+    "es6": true,
+    "minified": true,
+    "postcss": true,
+    "urlCheck": false
+  },
+  "libVersion": "3.8.8"
+}

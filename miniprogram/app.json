@@ -1,0 +1,11 @@
+{
+  "pages": ["pages/index/index"],
+  "window": {
+    "navigationBarTitleText": "无事发生",
+    "navigationBarBackgroundColor": "#f5f4ef",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5f4ef"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
