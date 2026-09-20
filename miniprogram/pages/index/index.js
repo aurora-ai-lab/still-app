@@ -11,7 +11,10 @@ Page({
   data: {
     activeSince: null,
     elapsed: 0,
+    displayTime: "00:00",
+    heatCells: Array.from({ length: 35 }, (_, index) => index),
     todayTotal: 0,
+    todayMinutes: 0,
     sessions: [],
     categories,
     selectedCategory: "发呆",
@@ -36,7 +39,7 @@ Page({
     const today = new Date().toISOString().slice(0, 10);
     const saved = sessions.filter((item) => item.date === today).reduce((sum, item) => sum + item.duration, 0);
     const elapsed = this.data.activeSince ? Math.floor((Date.now() - this.data.activeSince) / 1000) : 0;
-    this.setData({ elapsed, todayTotal: saved + elapsed });
+    this.setData({ elapsed, displayTime: formatDuration(elapsed), todayTotal: saved + elapsed, todayMinutes: Math.floor((saved + elapsed) / 60) });
   },
 
   start() {
@@ -78,8 +81,9 @@ Page({
 
   share() {
     const minutes = Math.floor(this.data.todayTotal / 60);
-    this.setData({ shareText: `今日无事发生 ${minutes} 分钟。什么都没发生，也很好。` });
-    wx.setClipboardData({ data: this.data.shareText });
+    const shareText = `今日无事发生 ${minutes} 分钟。什么都没发生，也很好。`;
+    this.setData({ shareText });
+    wx.setClipboardData({ data: shareText });
   },
 
   noop() {}
